@@ -393,7 +393,7 @@ class Span
      */
     private function generateSpanId()
     {
-        return dechex(mt_rand());
+        return dechex(random_int(0, PHP_INT_MAX));
     }
 
     /**

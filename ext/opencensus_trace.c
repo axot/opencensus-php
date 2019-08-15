@@ -19,7 +19,7 @@
 #include "Zend/zend_builtin_functions.h"
 #include "Zend/zend_exceptions.h"
 #include "standard/php_math.h"
-#include "standard/php_rand.h"
+#include "standard/php_random.h"
 
 /**
  * True globals for storing the original zend_execute_ex and
@@ -321,13 +321,10 @@ static int opencensus_trace_call_user_function_callback(zval *args, int num_args
 static zend_string *generate_span_id()
 {
     zval zv;
-#if PHP_VERSION_ID < 70100
-    if (!BG(mt_rand_is_seeded)) {
-        php_mt_srand(GENERATE_SEED());
-    }
-#endif
+    zend_long result;
 
-    ZVAL_LONG(&zv, ((uint32_t) php_mt_rand()) >> 1);
+    php_random_int_silent(0, UINT32_MAX, &result);
+    ZVAL_LONG(&zv, (uint32_t) result);
     return _php_math_longtobase(&zv, 16);
 }
 
